@@ -2,11 +2,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}SmartWeb{% endblock %}</title>
+        {{ include('general/stylesheetsBasic.html.twig') }}
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        {{ include('general/navbar.html.twig') }}
+
         {% block body %}{% endblock %}
+
+        {{ include('general/javaScriptBasic.html.twig') }}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
