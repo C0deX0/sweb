@@ -81,13 +81,16 @@ class TodoMainClass {
         createForm.insertAdjacentHTML('beforeend', saveButton);
 
         if (todoId !== 0) {
-            let options = createForm.getElementsByTagName('option');
+            const options = createForm.getElementsByTagName('option');
             Object.keys(options).forEach(function (dd) {
                 if (options[dd].value === color) {
                     options[dd].setAttribute('selected', '');
                 }
 
             });
+
+            const saveButton = createForm.getElementsByTagName('button');
+            saveButton[0].setAttribute('onclick', 'todoClass.saveEditTodo();');
 
             console.log();
         }
@@ -130,11 +133,19 @@ class TodoMainClass {
         };
     }
 
-    saveEditTodo (todoId)
+    saveEditTodo ()
     {
+        todoForm.onsubmit = async (e) => {
+            e.preventDefault();
 
+            await fetch('index.php/todoAjax?action=saveTodo&saveType=update', {
+                method: 'POST',
+                body: new FormData(todoForm)
+            });
 
-        console.warn(todoColor);
+            this.getAllTodos();
+            this.createTodoForm();
+        };
     }
 
 
