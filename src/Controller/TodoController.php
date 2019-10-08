@@ -41,19 +41,91 @@ class TodoController extends AbstractController
         return new JsonResponse($returnArray);
     }
 
-    protected function getTodos (Request $request)
+    /**
+     * Get all todos from my sql database
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    protected function getTodos (Request $request): array
     {
         $todoEntity = $this->getDoctrine()->getRepository(Todo::class);
 
+        $getFetchType = $request->get('fetchType');
         $todos = [
             'Request Error'
         ];
-        if ('all' === $request->get('param')) {
+        if ('all' === $getFetchType) {
             $todos = $todoEntity->getAll('all');
-        } elseif ('finished' === $request->get('param')) {
+        } elseif ('finished' === $getFetchType) {
             $todos = $todoEntity->getAll('finished');
         }
 
         return $todos;
+    }
+
+    /**
+     * Save New/Edit todo to database
+     *
+     * @param Request $request
+     */
+    protected function saveTodo (Request $request)
+    {
+        $todoEntity = $this->getDoctrine()->getManager();
+        $getSaveType = $request->get('saveType');
+
+        if ('insert' === $getSaveType) {
+            $todo = new Todo();
+            $todo->setTitle($request->get('todoTitle'));
+            $todo->setText($request->get('todoText'));
+            $todo->setColor($request->get('todoColor'));
+            $todo->setStatus('enabled');
+
+            $todoEntity->persist($todo);
+            $todoEntity->flush();
+        } elseif ('update' === $getSaveType) {
+
+            $todo = $todoEntity->getRepository(Todo::class)->find($request->get('todoId'));
+            $todo->setTitle($request->get('todoTitle'));
+            $todo->setText($request->get('todoText'));
+            $todo->setColor($request->get('todoColor'));
+            $todo->setStatus('enabled');
+            // TODO
+        }
+    }
+
+    /**
+     * Set todo to finish
+     *
+     * @param Request $request
+     */
+    protected function finishTodo (Request $request): void
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $todo = $entityManager->getRepository(Todo::class)->find($request->get('todoId'));
+
+        if (!$todo) {
+            throw new $this->createNotFoundException(
+                'Not todo with id: ' . $request->get('todoId')
+            );
+        }
+
+        $todo->setStatus('disabled');
+        $entityManager->flush();
+    }
+
+    /**
+     * Delete todo from database
+     *
+     * @param Request $request
+     */
+    protected function deleteTodo (Request $request): void
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $todo = $entityManager->getRepository(Todo::class)->find($request->get('todoId'));
+
+        $entityManager->remove($todo);
+        $entityManager->flush();
     }
 }
