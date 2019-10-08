@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CalendarController!{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('asset/fullCalendar/packages/core/main.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('asset/fullCalendar/packages/daygrid/main.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('asset/fullCalendar/packages/list/main.css')}}" />
+{% endblock %}
+
+{% block body %}
+    <style>
+        #calendar {
+            padding: 10px;
+            color: black;
+            background-color: white;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .fc-unthemed td .fc-today {
+            background-color: red;
+        }
+    </style>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-3">
+                <div class="bg-white h-100">
+
+                </div>
+            </div>
+            <div class="col">
+                <div id="calendar">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('asset/fullCalendar/packages/core/main.js') }}"></script>
+    <script src="{{ asset('asset/fullCalendar/packages/daygrid/main.js') }}"></script>
+    <script src="{{ asset('asset/fullCalendar/packages/interaction/main.js') }}"></script>
+    <script src="{{ asset('asset/fullCalendar/packages/list/main.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'interaction', 'dayGrid', 'list' ],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listDay,listWeek,listMonth'
+                },
+                views: {
+                    listDay: { buttonText: 'list day' },
+                    listWeek: { buttonText: 'list week' },
+                    listMonth: { buttonText: 'list month'}
+                },
+
+                navLinks: true, // can click day/week names to navigate views
+                selectable: true,
+                selectMirror: true,
+                select: function(arg) {
+                    var title = prompt('Event Title:');
+                    if (title) {
+                        calendar.addEvent({
+                            title: title,
+                            start: arg.start,
+                            end: arg.end,
+                            allDay: arg.allDay
+                        })
+                    }
+                    console.log(arg);
+                    calendar.unselect()
+                },
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: [
+                    {
+                        title: 'All Day Event',
+                        start: '2019-10-01'
+                    },
+                    {
+                        title: 'Long Event',
+                        start: '2019-10-07',
+                        end: '2019-10-10',
+                        color: 'green'
+                    },
+                    {
+                        groupId: 999,
+                        title: 'Repeating Event',
+                        start: '2019-10-09T16:00:00',
+                        end: '2019-10-10T16:00:00'
+                    },
+                    {
+                        groupId: 999,
+                        title: 'Repeating Event',
+                        start: '2019-10-16T16:00:00'
+                    },
+                    {
+                        title: 'Conference',
+                        start: '2019-10-11',
+                        end: '2019-10-13'
+                    },
+                    {
+                        title: 'Conference2',
+                        start: '2019-10-27',
+                        end: '2019-11-09',
+                        color: 'red'
+                    }
+                ],
+                eventTextColor: '#FFF'
+
+            });
+
+            calendar.render();
+        });
+    </script>
+{% endblock %}
