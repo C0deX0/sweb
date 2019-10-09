@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('asset/fullCalendar/packages/core/main.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{asset('asset/fullCalendar/packages/daygrid/main.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('asset/fullCalendar/packages/list/main.css')}}" />
+
+
 {% endblock %}
 
 {% block body %}
@@ -18,14 +20,71 @@
             margin: 0 auto;
         }
         .fc-unthemed td .fc-today {
-            background-color: red;
+            //background-color: red;
         }
     </style>
     <div class="container mt-5">
         <div class="row">
             <div class="col-3">
-                <div class="bg-white h-100">
+                <div id="accordion" class="">
+                    <div class="card">
 
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Actions
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <div>
+                                    <button class="btn btn-danger mr-2" id="createEventIndicator">•</button>
+                                    <button class="btn btn-success" type="button" onclick="calendarClass.calendarLoadEvents()">Enable Create Event</button>
+                                    <br>
+                                </div>
+                                <hr class="my-2" style="background-color: white">
+                                <div>
+                                    <button class="btn btn-success mr-2" id="">•</button>
+                                    <button class="btn btn-success" type="button" onclick="calendarClass.createEvent()">Add Events</button>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card">
+
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Collapsible Group Item #2
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card">
+
+                        <div class="card-header" id="headingThree">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Collapsible Group Item #3
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div class="col">
@@ -36,90 +95,44 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEventModalTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="addEventModalBody">
+
+                </div>
+                <div class="modal-footer" id="addEventModalFooter">
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ asset('asset/fullCalendar/packages/core/main.js') }}"></script>
+    <script src="{{ asset('asset/fullCalendar/packages/core/locales/de.js') }}"></script>
+    <script src="{{ asset('asset/fullCalendar/packages/moment/main.js') }}"></script>
     <script src="{{ asset('asset/fullCalendar/packages/daygrid/main.js') }}"></script>
     <script src="{{ asset('asset/fullCalendar/packages/interaction/main.js') }}"></script>
     <script src="{{ asset('asset/fullCalendar/packages/list/main.js') }}"></script>
+    <script src="{{ asset('asset/js/module/calendar/calendarMain.class.js') }}"></script>
 
     <script>
+        let calendarClass = new CalendarMainClass();
+
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'interaction', 'dayGrid', 'list' ],
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,listDay,listWeek,listMonth'
-                },
-                views: {
-                    listDay: { buttonText: 'list day' },
-                    listWeek: { buttonText: 'list week' },
-                    listMonth: { buttonText: 'list month'}
-                },
-
-                navLinks: true, // can click day/week names to navigate views
-                selectable: true,
-                selectMirror: true,
-                select: function(arg) {
-                    var title = prompt('Event Title:');
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: arg.start,
-                            end: arg.end,
-                            allDay: arg.allDay
-                        })
-                    }
-                    console.log(arg);
-                    calendar.unselect()
-                },
-                editable: true,
-                eventLimit: true, // allow "more" link when too many events
-                events: [
-                    {
-                        title: 'All Day Event',
-                        start: '2019-10-01'
-                    },
-                    {
-                        title: 'Long Event',
-                        start: '2019-10-07',
-                        end: '2019-10-10',
-                        color: 'green'
-                    },
-                    {
-                        groupId: 999,
-                        title: 'Repeating Event',
-                        start: '2019-10-09T16:00:00',
-                        end: '2019-10-10T16:00:00'
-                    },
-                    {
-                        groupId: 999,
-                        title: 'Repeating Event',
-                        start: '2019-10-16T16:00:00'
-                    },
-                    {
-                        title: 'Conference',
-                        start: '2019-10-11',
-                        end: '2019-10-13'
-                    },
-                    {
-                        title: 'Conference2',
-                        start: '2019-10-27',
-                        end: '2019-11-09',
-                        color: 'red'
-                    }
-                ],
-                eventTextColor: '#FFF'
-
-            });
-
-            calendar.render();
+            calendarClass.loadCalendar();
+            calendarClass.createEventFromCalendar();
         });
     </script>
 {% endblock %}

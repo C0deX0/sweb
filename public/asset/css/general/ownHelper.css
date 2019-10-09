@@ -1,0 +1,51 @@
+/* TEXT COLORS */
+.color-white {
+    color: white !important;
+}
+
+.color-red {
+    color: red !important;
+}
+
+.color-blue {
+    color: blue !important;
+}
+
+.color-green {
+    color: green !important;
+}
+
+.color-deeppink {
+    color: deeppink !important;
+}
+
+.color-black {
+    color: black !important;
+}
+
+
+
+/* BACKGROUND COLORS */
+.bg-color-white {
+    background-color: white !important;
+}
+
+.bg-color-red {
+    background-color: red !important;
+}
+
+.bg-color-blue {
+    background-color: blue !important;
+}
+
+.bg-color-green {
+    background-color: green !important;
+}
+
+.bg-color-deeppink {
+    background-color: deeppink !important;
+}
+
+.bg-color-black {
+    background-color: black !important;
+}
