@@ -34,25 +34,26 @@ class CalendarMainClass {
         this.calendarObj = calendar;
     };
 
-    async calendarLoadEvents ()
+    calendarLoadEvents ()
     {
-        let lastMonthDay = moment().endOf('month').format('DD');
-        let currentMonth = moment().month() + 1;
+        let xhr = new XMLHttpRequest();
 
-        let response = await fetch('index.php/calendarAjax?action=getCurrentEvents&lastDay=' + lastMonthDay + '&currentMonth=' + currentMonth);
+        xhr.open('GET', '/calendarAjax?action=getCurrentEvents');
+        xhr.responseType = 'json';
+        xhr.send();
 
-        if (response.ok) {
-            let currentEvents = await response.json();
-        } else {
-            console.log('HTTP-Error: ' + response.status);
-        }
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                return xhr.response;
+            } else {
+                console.log('HTTP-Error: ' + response.status);
+            }
+        };
+    }
 
-        for (let calendarEvent in currentEvents) {
-            console.log(calendarEvent);
-            calendarClass.calendarObj.addEvent({
-
-            });
-        }
+    showCalendarEvents ()
+    {
+        let currentEvents = this.calendarLoadEvents();
     }
 
     enableAddEvents ()
@@ -162,10 +163,8 @@ class CalendarMainClass {
     }
 
 
-    getAllEvents ()
-    {
-        return this.calendarObj.getEvents();
-    }
+
+
 
     loadEvents ()
     {

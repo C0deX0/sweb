@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CalendarController!{% endblock %}
+{% block title %}Calendar{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" type="text/css" href="{{ asset('asset/fullCalendar/packages/core/main.css') }}" />
@@ -43,7 +43,7 @@
                                     <button class="btn btn-success" type="button" onclick="calendarClass.calendarLoadEvents()">Enable Create Event</button>
                                     <br>
                                 </div>
-                                <hr class="my-2" style="background-color: white">
+                                <hr class="my-2 bg-color-white">
                                 <div>
                                     <button class="btn btn-success mr-2" id="">•</button>
                                     <button class="btn btn-success" type="button" onclick="calendarClass.createEvent()">Add Events</button>

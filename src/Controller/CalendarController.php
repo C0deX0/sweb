@@ -6,6 +6,7 @@ use App\Entity\CalendarNormal;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CalendarController extends AbstractController
@@ -58,14 +59,18 @@ class CalendarController extends AbstractController
 
                 $calendarEntity->persist($calendarNormal);
                 $calendarEntity->flush();
-
-
             }
+        } elseif ('update' === $saveType) {
+
         }
     }
 
-    protected function getCurrentEvents (Request $request)
+    protected function getCurrentEvents ()
     {
+        $calendarEntity = $this->getDoctrine()->getRepository(CalendarNormal::class);
 
+        $currentEvents = $calendarEntity->getAllThisMonth();
+
+        return $currentEvents;
     }
 }
