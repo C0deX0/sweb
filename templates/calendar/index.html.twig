@@ -38,15 +38,20 @@
                         </div>
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                             <div class="card-body">
+                                <div class="btn-group w-100" role="group" aria-label="calendarActions">
+                                    <button type="button" class="btn btn-success" onclick="calendarClass.preView();">&#x3c;</button>
+                                    <button type="button" class="btn btn-success" onclick="calendarClass.nextView();">&#x3e;</button>
+                                </div>
+                                <hr class="my-2 bg-color-white">
                                 <div>
-                                    <button class="btn btn-danger mr-2" id="createEventIndicator">•</button>
-                                    <button class="btn btn-success" type="button" onclick="calendarClass.calendarLoadEvents()">Enable Create Event</button>
+                                    <button class="btn btn-success w-100" type="button" onclick="calendarClass.createEvent();">Create Events</button>
+                                    <button class="btn btn-success w-100 mt-2" type="button" onclick="calendarClass.createEvent();">Current Month Events</button>
                                     <br>
                                 </div>
                                 <hr class="my-2 bg-color-white">
                                 <div>
                                     <button class="btn btn-success mr-2" id="">•</button>
-                                    <button class="btn btn-success" type="button" onclick="calendarClass.createEvent()">Add Events</button>
+                                    <button class="btn btn-success" type="button" onclick="calendarClass.rrrrrrrr();">TEST BUTTON</button>
                                     <br>
                                 </div>
                             </div>
@@ -115,7 +120,6 @@
         </div>
     </div>
 
-
 {% endblock %}
 
 {% block javascripts %}
@@ -133,6 +137,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             calendarClass.loadCalendar();
             calendarClass.createEventFromCalendar();
+            calendarClass.calendarLoadEvents();
         });
     </script>
 {% endblock %}

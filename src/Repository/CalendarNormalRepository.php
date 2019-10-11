@@ -49,16 +49,17 @@ class CalendarNormalRepository extends ServiceEntityRepository
     */
 
     /**
-     *
+     * Get basic info for event view (calendar view)
      *
      * @return mixed
      */
-    public function getAllThisMonth ()
+    public function getAllThisMonth ($currentMonth)
     {
         return $this->createQueryBuilder('e')
             ->select('e.id, e.title, e.color, e.start_event, e.end_event')
-            ->andWhere('MONTH(e.end_event) = MONTH(CURRENT_DATE())')
+            ->andWhere('MONTH(e.end_event) = MONTH(?0)')
             ->andWhere('YEAR(e.end_event) = YEAR(CURRENT_DATE())')
+            ->setParameter(0, $currentMonth)
             ->getQuery()
             ->getResult();
     }

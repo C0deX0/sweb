@@ -1,7 +1,15 @@
 class CalendarMainClass {
 
+    /**
+     * Calendar Object
+     *
+     * @type {ObjectConstructor}
+     */
     calendarObj = Object;
 
+    /**
+     * Init calendar
+     */
     loadCalendar ()
     {
         let calendarEl = document.getElementById('calendar');
@@ -10,7 +18,7 @@ class CalendarMainClass {
             lang: 'de',
             plugins: [ 'interaction', 'dayGrid', 'list' ],
             header: {
-                left: 'prev,next today',
+                left: 'today',
                 center: 'title',
                 right: 'dayGridMonth,listDay,listWeek,listMonth'
             },
@@ -34,58 +42,76 @@ class CalendarMainClass {
         this.calendarObj = calendar;
     };
 
-    calendarLoadEvents ()
+    /**
+     * Load the events from database
+     *
+     * @returns {Promise<void>}
+     */
+    async calendarLoadEvents ()
     {
-        let xhr = new XMLHttpRequest();
+        let currentMonth = this.toJSONLocal(new Date(this.calendarObj.view.currentStart));
 
-        xhr.open('GET', '/calendarAjax?action=getCurrentEvents');
-        xhr.responseType = 'json';
-        xhr.send();
+        let eventsResponse = await fetch('index.php/calendarAjax?action=getCurrentEvents&current=' + currentMonth);
 
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                return xhr.response;
-            } else {
-                console.log('HTTP-Error: ' + response.status);
-            }
-        };
+        if (eventsResponse.ok) {
+            calendarClass.showCalendarEvents(await eventsResponse.json())
+        } else {
+            console.log('HTTP-Error: ' + eventsResponse.status);
+        }
     }
 
-    showCalendarEvents ()
+    /**
+     * Displays the Events
+     *
+     * @param currentEvents
+     */
+    showCalendarEvents (currentEvents)
     {
-        let currentEvents = this.calendarLoadEvents();
-    }
+        console.log(currentEvents);
 
-    enableAddEvents ()
-    {
-        let createIndicator = document.getElementById('createEventIndicator');
+        for (let calendarEvent in currentEvents) {
 
-        this.calendarObj.on('select', function (arg) {
-            var title = prompt('Event Title:');
-            if (title) {
-                this.addEvent({
-                    title: title,
-                    start: arg.start,
-                    end: arg.end
+            let eventId = currentEvents[calendarEvent].id;
+
+            if (this.calendarObj.getEventById(eventId) === null) {
+
+                let eventStart = currentEvents[calendarEvent].start_event.date;
+                eventStart = eventStart.substring(0, eventStart.indexOf(' '));
+
+                let eventEnd = currentEvents[calendarEvent].end_event.date;
+                eventEnd = eventEnd.substring(0, eventEnd.indexOf(' '));
+
+                calendarClass.calendarObj.addEvent({
+                    id: eventId,
+                    title: currentEvents[calendarEvent].title,
+                    color: currentEvents[calendarEvent].color,
+                    start: eventStart,
+                    end: eventEnd
                 });
+
+            } else {
+                console.log('Found!');
             }
-            console.log(arg);
-            this.unselect()
-        });
-
-
-        createIndicator.classList.remove('btn-danger');
-        createIndicator.classList.add('btn-success');
+        }
     }
 
+    /**
+     * Add the heading and formula to the modal body
+     *
+     * @param action
+     */
     createEventModal (action)
     {
+        // Heading element
         let modalTitle = document.getElementById('addEventModalTitle');
+        // Body element
         let modalBody = document.getElementById('addEventModalBody');
-        let modalFooter = document.getElementById('addEventModalFooter');
 
         if ('createEvent' === action) {
+
+            // Add heading
             modalTitle.innerHTML = 'Create Event';
+            // Add formula to body
             modalBody.innerHTML = ''+
                 '<form id="createEventModalForm">' +
                 '  <div class="form-row">' +
@@ -121,6 +147,9 @@ class CalendarMainClass {
         }
     }
 
+    /**
+     * Create event from calendar (clicking on a day) (Modal)
+     */
     createEventFromCalendar ()
     {
         this.calendarObj.on('select', function (arg) {
@@ -131,12 +160,20 @@ class CalendarMainClass {
         });
     }
 
+    /**
+     * Create event from Action Panel (Modal)
+     */
     createEvent ()
     {
         this.createEventModal('createEvent');
+        document.getElementById('eventStart').value = this.toJSONLocal(new Date());
+        document.getElementById('eventEnd').value = this.toJSONLocal(new Date());
         $('#addEventModal').modal('toggle');
     }
 
+    /**
+     * Add the event to the calendar and in database
+     */
     saveEvent ()
     {
         createEventModalForm.onsubmit = async (e) => {
@@ -158,51 +195,43 @@ class CalendarMainClass {
                 });
             }
         };
+    }
 
+    
+
+    /**
+     * Go to last month and load the events
+     */
+    preView()
+    {
+        this.calendarObj.prev();
+        this.calendarLoadEvents();
+    }
+
+    /**
+     * Go to next month and load the events
+     */
+    nextView ()
+    {
+        this.calendarObj.next();
+        this.calendarLoadEvents();
+    }
+
+    rrrrrrrr ()
+    {
 
     }
 
-
-
-
-
-    loadEvents ()
-    {
-        return [
-            {
-                title: 'All Day Event',
-                start: '2019-10-01T12:00:00',
-                end: '2019-10-01T15:30:00'
-            },
-            {
-                title: 'Long Event',
-                start: '2019-10-07',
-                end: '2019-10-10',
-                color: 'green'
-            },
-            {
-                groupId: 999,
-                title: 'Repeating Event',
-                start: '2019-10-09T16:00:00',
-                end: '2019-10-10T16:00:00'
-            },
-            {
-                groupId: 999,
-                title: 'Repeating Event',
-                start: '2019-10-16T16:00:00'
-            },
-            {
-                title: 'Conference',
-                start: '2019-10-11T09:00:00',
-                end: '2019-10-11T13:00:00'
-            },
-            {
-                title: 'Conference2',
-                start: '2019-10-27',
-                end: '2019-11-01',
-                color: 'deeppink'
-            }
-        ];
+    /**
+     * Format date to date for MySQL (YYYY-mm-dd)
+     *
+     * @param date
+     * @returns {string}
+     */
+    toJSONLocal (date) {
+        var local = new Date(date);
+        local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
     }
 
     setColorSelector (element)
